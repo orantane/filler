@@ -6,13 +6,13 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 16:45:02 by orantane          #+#    #+#             */
-/*   Updated: 2020/07/30 17:39:18 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/07 03:41:45 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
-# define BUFF_SIZE 8
+# define BUFF_SIZE 1
 # define FD_SIZE 4864
 
 # include <unistd.h>
