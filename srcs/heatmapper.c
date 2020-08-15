@@ -6,41 +6,90 @@
 /*   By: orantane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/10 14:16:18 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/10 16:52:26 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 17:19:42 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/filler.h"
 
-t_filler	*give_value(t_filler *filler, int x, int y, int dir)
+static int		check_zero(t_filler *filler, t_block *map, int x, int y)
 {
-	int		opponent;
-	int		player;
+	if ((x + 1) < map->width && filler->heat[y][x + 1] == OPPO)
+		return (0);
+	if ((x - 1) >= 0 && filler->heat[y][x - 1] == OPPO)
+		return (0);
+	if ((y + 1) < map->height && filler->heat[y + 1][x] == OPPO)
+		return (0);
+	if ((y - 1) >= 0 && filler->heat[y - 1][x] == OPPO)
+		return (0);
+	return (PLAY);
+}
 
-	opponent = 200000;
-	player = 100000;
-	while (++y < filler->map.height)
+/*
+** Checks around the current position to find the correct value for that
+** position. Needs to have 0's around the opponent for this to work. This
+** function needs to be added.
+*/
+
+static int		check_value(t_filler *filler, t_block *map, int x, int y)
+{
+	int		value;
+	int		arr[4];
+	int		i;
+
+	i = -1;
+	value = 1000;
+	if (filler->heat[y][x] == PLAY)
+		return (PLAY);
+	if (filler->heat[y][x] == OPPO)
+		return (OPPO);
+	if ((x + 1) < map->width)
+		arr[0] = filler->heat[y][x + 1] + 1;
+	if ((x - 1) >= 0)
+		arr[1] = filler->heat[y][x - 1] + 1;
+	if ((y + 1) < map->height)
+		arr[2] = filler->heat[y + 1][x] + 1;
+	if ((y - 1) >= 0)
+		arr[3] = filler->heat[y - 1][x] + 1;
+	arr[4] = check_zero(filler, map, x, y);
+	while (++i < 5)
+	{
+		if (arr[i] < value)
+			value = arr[i];
+	}
+	return (value);
+}
+
+t_filler	*give_value(t_filler *filler, t_block *map, int dir)
+{
+	int	y;
+	int	x;
+
+	y = -1;
+	while (++y < map->height)
 	{
 		x = -1;
-		while (++x < filler->map.width)
+		while (++x < map->width)
 		{
-			if (filler->heat[y][x] == player) // Skips the players positions.
-				continue ;
-			if (filler->heat[y][x] == opponent) // Marks zeroes around the opponent positions.
+			if (filler->heat[y][x] == PLAY) // Skips the players positions.
+				x++;
+			if (filler->heat[y][x] == OPPO) // Marks zeroes around the opponent positions.
 			{
-				if (filler->map.width > (x + dir) && (x + dir) >= 0)
+				if (map->width > (x + dir) && (x + dir) >= 0 && filler->heat[y][x + dir] < PLAY)
 					filler->heat[y][x + dir] = 0;
-				if (filler->map.height > (y + dir) && (y + dir) >= 0)
+				if (map->height > (y + dir) && (y + dir) >= 0 && filler->heat[y + dir][x] < PLAY)
 					filler->heat[y + dir][x] = 0;
+				x++;
 			}
-			if (x - 1 >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y][x - 1] + 1;
-			if (x + 1 <= filler->map.width && filler->heat[y][x - 1] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y][x + 1] + 1;
-			if (y - 1 >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y - 1][x] + 1;
-			if (y + 1 <= filler->map.height && filler->heat[y + 1][x] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y + 1][x] + 1;
+			filler->heat[y][x] = check_value(filler, map, x, y);
+//			if (x - 1 >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y][x - 1] + 1;
+//			if (x + 1 < map->width && filler->heat[y][x + 1] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y][x + 1] + 1;
+//			if (y - 1 >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y - 1][x] + 1;
+//			if (y + 1 < map->height && filler->heat[y + 1][x] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y + 1][x] + 1;
 		}
 	}
 	return (filler);
@@ -52,39 +101,38 @@ t_filler	*give_value(t_filler *filler, int x, int y, int dir)
 ** the reversing function that creates the second half.
 */
 
-t_filler	*give_value_rev(t_filler *filler, int x, int y, int dir)
+t_filler	*give_value_rev(t_filler *filler, t_block *map, int dir)
 {
-	int		opponent;
-	int		player;
+	int	y;
+	int	x;
 
-	opponent = 200000;
-	player = 100000;
-	while (y >= 0)
+	y = map->height;
+	while (--y >= 0)
 	{
-		while (x >= 0)
+		x = map->width;
+		while (--x >= 0)
 		{
-			if (filler->heat[y][x] == player) // Skips the players positions.
-				continue ;
-			if (filler->heat[y][x] == opponent) // Marks zeroes around the opponent positions.
+			if (filler->heat[y][x] == PLAY) // Skips the players positions.
+				x--;
+			if (filler->heat[y][x] == OPPO) // Marks zeroes around the opponent positions.
 			{
-				if (filler->map.width > (x + dir) && (x + dir) >= 0)
+				if (map->width > (x + dir) && (x + dir) >= 0 && filler->heat[y][x + dir] < PLAY)
 					filler->heat[y][x + dir] = 0;
-				if (filler->map.height > (y + dir) && (y + dir) >= 0)
+				if (map->height > (y + dir) && (y + dir) >= 0 && filler->heat[y + dir][x] < PLAY)
 					filler->heat[y + dir][x] = 0;
-			}// Under this: Checks positions around the current position, to see what is the correct value.
-			// This can be copied to another function so that it serves as a universal function.
-			if (x - 1 >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y][x - 1] + 1;
-			if (x + 1 <= filler->map.width && filler->heat[y][x - 1] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y][x + 1] + 1;
-			if (y - 1 >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y - 1][x] + 1;
-			if (y + 1 <= filler->map.height && filler->heat[y + 1][x] < filler->heat[y][x])
-				filler->heat[y][x] = filler->heat[y + 1][x] + 1;
+				x--;
+			}
+			filler->heat[y][x] = check_value(filler, map, x, y);
+//			if (x - 1 >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y][x - 1] + 1;
+//			if (x + 1 < map->width && filler->heat[y][x + 1] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y][x + 1] + 1;
+//			if (y - 1 >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y - 1][x] + 1;
+//			if (y + 1 < map->height && filler->heat[y + 1][x] < filler->heat[y][x])
+//				filler->heat[y][x] = filler->heat[y + 1][x] + 1;
 			x--;
 		}
-		x = filler->map.width;
-		y--;
 	}
 	return (filler);
 }
@@ -96,38 +144,32 @@ t_filler	*give_value_rev(t_filler *filler, int x, int y, int dir)
 ** position.
 */
 
-t_filler	*mark_players(t_filler *filler, int x, int y)
+ t_filler	*mark_players(t_filler *filler, t_block *map)
 {
-	int		opponent;
-	int		player;
+	int	y;
+	int	x;
 
-	opponent = 200000;
-	player = 100000;
-	while (filler->map.cell[++y])
+	y = -1;
+	while (++y < map->height)
 	{
-		while (filler->map.cell[y][++x])
+		x = -1;
+		while (++x < map->width)
 		{
-			if (filler->map.cell[y][x] == filler->opponent)
-				filler->heat[y][x] = opponent;
-			else if (filler->map.cell[y][x] == filler->player)
-				filler->heat[y][x] = player;
+			if (map->cell[y][x] == filler->opponent || map->cell[y][x] == (filler->opponent + 32))
+				filler->heat[y][x] = OPPO;
+			else if (map->cell[y][x] == filler->player || map->cell[y][x] == (filler->player + 32))
+				filler->heat[y][x] = PLAY;
 			else
 				filler->heat[y][x] = 1000;
 		}
-		x = -1;
 	}
 	return (filler);
 }
 
-void		heatmapper(t_filler *filler)
+void		heatmapper(t_filler *filler, t_block *map, t_block *cell)
 {
-	int		y;
-	int		x;
-
-	y = -1;
-	x = -1;
-	filler = mark_players(filler, y, x);
-	filler = give_value(filler, y, x, 1);
-	filler = give_value_rev(filler, filler->map.height, filler->map.width, -1);
-	solver(filler);
+	filler = mark_players(filler, map);
+	filler = give_value(filler, map, 1);
+	filler = give_value_rev(filler, map, -1);
+	solver(filler, map, cell);
 }

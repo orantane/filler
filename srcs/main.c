@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 18:28:44 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/10 16:51:32 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 17:00:45 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,68 +23,68 @@ void		free_cell(char **cell)
 		free(cell);
 }
 
-void		read_piece(t_filler *filler, char *line)
+void		read_piece(t_filler *filler, t_block *map, char *line)
 {
 	int		y;
+	t_block	*cell;
 
+	if (!(cell = (t_block *)malloc(sizeof(cell))))
+		exit(1);
 	y = -1;
 	line = line + 6;
-	filler->cell.height = ft_atoi(line);
-	filler->cell.width = ft_atoi(ft_strchr(line, ' ') + 1);
-	if (filler->cell.cell)
-		free_cell(filler->cell.cell);
-	filler->cell.cell = ft_memalloc(filler->cell.height * sizeof(char *));
-	while (++y < filler->cell.height)
+	cell->height = ft_atoi(line);
+	cell->width = ft_atoi(ft_strchr(line, ' ') + 1);
+	cell->cell = ft_memalloc((1 + cell->height) * sizeof(char *));
+	cell->cell[cell->height] = NULL;
+	while (++y < cell->height)
 	{
 		get_next_line(0, &line);
-		filler->cell.cell[y] = ft_strdup(line);
+		cell->cell[y] = ft_strdup(line);
 	}
-	heatmapper(filler);
+	heatmapper(filler, map, cell);
 }
 
-void		read_map(t_filler *filler)
+void		read_map(t_filler *filler, t_block *map, char *line)
 {
 	int		y;
 
 	y = 0;
-	if (filler->map.cell)
-		free_cell(filler->map.cell);
-	filler->map.cell = ft_memalloc(filler->map.height * sizeof(char *));
+	map->cell = ft_memalloc((1 + map->height) * sizeof(char *));
+	map->cell[map->height] = NULL;
 	while (ft_strncmp(line, "000 ", 4) != 0)
 		get_next_line(0, &line);
-	while (ft_strncmp(line, "Piece ", 5) != 0)
+	while (ft_strncmp(line, "Piece ", 6) != 0)
 	{
-		filler->map.cell[y] = ft_strdup(line + 4);
+		map->cell[y] = ft_strdup(line + 4);
 		y++;
 		if (get_next_line(0, &line) < 0)
 			return ;
 	}
-	read_piece(filler, line);
+	read_piece(filler, map, line);
 }
 
-void		init_map(t_filler *filler)
+void		init_map(t_filler *filler, char *line)
 {
-	char	*line;
-	int		y;
+//	int		y;
+	t_block	*map;
 
-
-	y = -1;
-	line = NULL;
-	if (get_next_line(0, &line) < 0)
-		return ;
+	if (!(map = (t_block *)malloc(sizeof(map))))
+		exit(1);
+//	y = -1;
+	if (ft_strncmp(line, "Plateau ", 6) != 0)
+		get_next_line(0, &line);
 	if (ft_strncmp(line, "Plateau ", 6) == 0)
 	{
 		line = ft_strchr(line, ' ') + 1;
-		filler->map.height = ft_atoi(line);
-		filler->map.width = ft_atoi(ft_strchr(line, ' ') + 1);
+		map->height = ft_atoi(line);
+		map->width = ft_atoi(ft_strchr(line, ' ') + 1);
 	}
-	filler->heat = ft_memalloc(filler->cell.height * sizeof(int *));
-	while (++y < filler->map.height)
-	{
-		if (!(filler->heat[y] = (int *)malloc(sizeof(int) * filler->map.width)))
-			return ;
-	}
-	read_map(filler);
+//	while (++y < map->height)
+//	{
+//		if (!(filler->heat[y] = (int *)malloc(sizeof(int) * map->width)))
+//			return ;
+//	}
+	read_map(filler, map, line);
 }
 
 int			main(void)
@@ -110,8 +110,7 @@ int			main(void)
 			filler->player = 'X';
 			filler->opponent = 'O';
 		}
-		ft_strdel(&line);
 	}
-	init_map(filler);
+	init_map(filler, line);
 	return (1);
 }

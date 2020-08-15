@@ -6,23 +6,18 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 17:42:36 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/10 16:36:40 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/14 19:32:09 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FILLER_H
+# define FILLER_H
+# define PLAY 100000
+# define OPPO 200000
+# define OFFS 10000
+
 # include "../libft/libft.h"
 # include <stdio.h> //remove this before turning in!
-
-/*
-** Struct for all coordinates.
-*/
-
-typedef struct	s_coord
-{
-	int			x;
-	int			y;
-}				t_coord;
 
 /*
 ** Struct for the map and incoming blocks.
@@ -32,7 +27,6 @@ typedef struct	s_block
 {
 	int			width;
 	int			height;
-	int			size;
 	char		**cell;
 }				t_block;
 
@@ -46,17 +40,28 @@ typedef struct	s_block
 
 typedef struct	s_filler
 {
-	t_coord		pos;
-	t_block		map;
-	t_block		cell;
-	int			**heat;
+	int			x;
+	int			y;
+	int			val;
+	int			size;
+	int			off_y;
+	int			off_x;
+	int			over_y;
+	int			over_x;
 	char		player;
 	char		opponent;
+	int			heat[1000][1000];
 }				t_filler;
 
 int			main(void);
-void		init_map(t_filler *filler);
-void		read_map(t_filler *filler);
-void		read_piece(t_filler *filler, char *line);
+void		init_map(t_filler *filler, char *line);
+void		read_map(t_filler *filler, t_block *map, char *line);
+void		read_piece(t_filler *filler, t_block *map, char *line);
+void		free_cell(char **cell);
+void		heatmapper(t_filler *filler, t_block *map, t_block *cell);
+t_filler	*mark_players(t_filler *filler, t_block *map);
+t_filler	*give_value(t_filler *filler, t_block *map, int dir);
+t_filler	*give_value_rev(t_filler *filler, t_block *map, int dir);
+void		solver(t_filler *filler, t_block *map, t_block *cell);
 
 #endif
