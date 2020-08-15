@@ -6,7 +6,7 @@
 /*   By: orantane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/22 11:01:01 by orantane          #+#    #+#             */
-/*   Updated: 2020/07/30 17:37:16 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 21:22:42 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*ft_strdup(const char *s1)
 	size_t	i;
 	char	*s2;
 
+	if (!s1)
+		return (NULL);
 	i = ft_strlen(s1);
 	if (!(s2 = (char *)malloc(sizeof(char) * (i + 1))))
 		return (NULL);

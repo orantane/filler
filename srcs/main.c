@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 18:28:44 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 19:49:39 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 23:01:29 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,25 @@ void		read_piece(t_filler *filler, char *line)
 	int		y;
 
 	y = -1;
+	filler->cellwidth = 0;
+	filler->cellheight = 0;
 	line = line + 6;
 	filler->cellheight = ft_atoi(line);
 	filler->cellwidth = ft_atoi(ft_strchr(line, ' ') + 1);
-	filler->cell = (char **)malloc((1 + filler->cellheight) * sizeof(char *));
+	if (!(filler->cell = (char **)malloc((1 + filler->cellheight) * sizeof(char *))))
+	{
+		write(1, "error\n", 6);
+		exit(1);
+	}
 	filler->cell[filler->cellheight] = NULL;
 	while (++y < filler->cellheight)
 	{
 		get_next_line(0, &line);
-		filler->cell[y] = ft_strdup(line);
+		if ((filler->cell[y] = ft_strdup(line)) == NULL)
+		{
+			write(1, "error\n", 6);
+			exit(1);
+		}
 	}
 	heatmapper(filler);
 }
@@ -46,11 +56,12 @@ void		read_map(t_filler *filler, char *line)
 	int		y;
 
 	y = 0;
-	filler->map = (char **)malloc((1 + filler->mapheight) * sizeof(char *));
+	if (!(filler->map = (char **)malloc((1 + filler->mapheight) * sizeof(char *))))
+		exit(1);
 	filler->map[filler->mapheight] = NULL;
 	while (ft_strncmp(line, "000 ", 4) != 0)
 		get_next_line(0, &line);
-	while (ft_strncmp(line, "Piece ", 6) != 0)
+	while (y < filler->mapheight)
 	{
 		filler->map[y] = ft_strdup(line + 4);
 		y++;
@@ -62,6 +73,8 @@ void		read_map(t_filler *filler, char *line)
 void		init_map(t_filler *filler, char *line)
 {
 	filler->off_y = OFFS;
+	filler->mapheight = 0;
+	filler->mapwidth = 0;
 	filler->off_x = OFFS;
 	filler->val = OPPO;
 	filler->size = 0;
@@ -78,11 +91,9 @@ void		init_map(t_filler *filler, char *line)
 
 int			main(void)
 {
-	t_filler	*filler;
+	t_filler	filler;
 	char		*line;
 
-	if (!(filler = (t_filler *)malloc(sizeof(filler))))
-		exit(1);
 	line = NULL;
 	if (get_next_line(0, &line) < 0)
 		exit(1);
@@ -91,15 +102,15 @@ int			main(void)
 	{
 		if (line[10] == '1')
 		{
-			filler->player = 'O';
-			filler->opponent = 'X';
+			filler.player = 'O';
+			filler.opponent = 'X';
 		}
 		else
 		{
-			filler->player = 'X';
-			filler->opponent = 'O';
+			filler.player = 'X';
+			filler.opponent = 'O';
 		}
 	}
-	init_map(filler, line);
+	init_map(&filler, line);
 	return (1);
 }

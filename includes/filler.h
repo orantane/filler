@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 17:42:36 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 19:56:58 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 20:52:51 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ void		read_map(t_filler *filler, char *line);
 void		read_piece(t_filler *filler, char *line);
 void		free_cell(char **cell);
 void		heatmapper(t_filler *filler);
-t_filler	*mark_players(t_filler *filler);
-t_filler	*give_value(t_filler *filler);
-t_filler	*give_value_rev(t_filler *filler);
+void		mark_players(t_filler *filler);
+void		give_value(t_filler *filler);
+void		give_value_rev(t_filler *filler);
 void		solver(t_filler *filler);
 
 #endif

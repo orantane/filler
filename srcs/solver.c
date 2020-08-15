@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 19:46:24 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 22:53:50 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void		print_position(t_filler *filler)
 	write(1, "\n", 1);
 }
 
-static t_filler	*place_cell(t_filler *filler, int y, int x)
+static void		place_cell(t_filler *filler, int y, int x)
 {
 	int		cy;
 	int		cx;
@@ -30,12 +30,10 @@ static t_filler	*place_cell(t_filler *filler, int y, int x)
 	size = 0;
 	cy = filler->off_y;
 	value = 0;
-	while ((y + cy - filler->off_y) < filler->mapheight &&
-			(y + cy - filler->off_y) > -1 && cy < filler->cellheight)
+	while (cy < filler->cellheight && (y + cy - filler->off_y) < filler->mapheight)
 	{
 		cx = filler->off_x;
-		while((x + cx - filler->off_x) < filler->mapwidth &&
-				(x + cx - filler->off_x) > -1 && cx < filler->cellwidth)
+		while((x + cx - filler->off_x) < filler->mapwidth && cx < filler->cellwidth)
 		{
 			if (filler->cell[cy][cx] == '*')
 			{
@@ -52,7 +50,6 @@ static t_filler	*place_cell(t_filler *filler, int y, int x)
 		filler->y = y - filler->off_y;
 		filler->x = x - filler->off_x;
 	}
-	return (filler);
 }
 
 /*
@@ -61,7 +58,7 @@ static t_filler	*place_cell(t_filler *filler, int y, int x)
 ** where there are two values that are equal.
 */
 
-static t_filler	*get_low_value(t_filler *filler)
+static void		get_low_value(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -72,18 +69,12 @@ static t_filler	*get_low_value(t_filler *filler)
 	while (++y < filler->mapheight)
 	{
 		x = -1;
-		printf("y: ");
 		while (++x < filler->mapwidth)
-		{
-			filler = place_cell(filler, y, x);
-			printf("x ");
-		}
-		printf("\n");
+			place_cell(filler, y, x);
 	}
-	return (filler);
 }
 
-static t_filler	*set_offset(t_filler *filler, int y, int x)
+static void	set_offset(t_filler *filler, int y, int x)
 {
 	while (++y < filler->cellheight)
 	{
@@ -104,7 +95,6 @@ static t_filler	*set_offset(t_filler *filler, int y, int x)
 			}
 		}
 	}
-	return (filler);
 }
 
 void			solver(t_filler *filler)
@@ -114,18 +104,9 @@ void			solver(t_filler *filler)
 
 	x = -1;
 	y = -1;
-	filler = set_offset(filler, y, x);
-	printf("map before offset = %d, %d\n", filler->mapheight, filler->mapwidth);
-	filler = get_low_value(filler);
-	printf("map before offset = %d, %d\n", filler->mapheight, filler->mapwidth);
-//	while (++y < 14)
-//	{
-//		x = -1;
-//		while (++x < 30)
-//			printf("%d\t", filler->heat[y][x]);
-//		printf("\n");
-//	}
+	set_offset(filler, y, x);
+	get_low_value(filler);
 	if (filler->val < PLAY || filler->val >= OPPO)
-		exit(1);
+		return ;
 	print_position(filler);
 }

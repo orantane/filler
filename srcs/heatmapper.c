@@ -6,7 +6,7 @@
 /*   By: orantane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/10 14:16:18 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 19:38:30 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 21:49:43 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int		check_value(t_filler *filler, int x, int y)
 	return (value);
 }
 
-t_filler	*give_value(t_filler *filler)
+void		give_value(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -81,7 +81,6 @@ t_filler	*give_value(t_filler *filler)
 			filler->heat[y][x] = check_value(filler, x, y);
 		}
 	}
-	return (filler);
 }
 
 /*
@@ -90,7 +89,7 @@ t_filler	*give_value(t_filler *filler)
 ** the reversing function that creates the second half.
 */
 
-t_filler	*give_value_rev(t_filler *filler)
+void		give_value_rev(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -108,7 +107,6 @@ t_filler	*give_value_rev(t_filler *filler)
 			filler->heat[y][x] = check_value(filler, x, y);
 		}
 	}
-	return (filler);
 }
 
 /*
@@ -118,7 +116,7 @@ t_filler	*give_value_rev(t_filler *filler)
 ** position.
 */
 
- t_filler	*mark_players(t_filler *filler)
+void		mark_players(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -137,17 +135,12 @@ t_filler	*give_value_rev(t_filler *filler)
 				filler->heat[y][x] = 1000;
 		}
 	}
-	return (filler);
 }
 
 void		heatmapper(t_filler *filler)
 {
-	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
-	filler = mark_players(filler);
-	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
-	filler = give_value(filler);
-	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
-	filler = give_value_rev(filler);
-	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
+	mark_players(filler);
+	give_value(filler);
+	give_value_rev(filler);
 	solver(filler);
 }
