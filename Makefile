@@ -6,7 +6,7 @@
 #    By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/17 16:20:24 by orantane          #+#    #+#              #
-#    Updated: 2020/07/30 17:42:09 by orantane         ###   ########.fr        #
+#    Updated: 2020/08/15 18:06:54 by orantane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,13 +16,18 @@ SRC = srcs/*.c
 
 OBJ = *.o
 
+LIB = libft/libft.a
+
 HEADER = includes/filler.h
 
 FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME):
+$(NAME): $(OBJ)
+	gcc $(FLAGS) -o $(NAME) $(OBJ) $(LIB) -I $(HEADER)
+
+$(OBJ):
 	gcc $(FLAGS) -c $(SRC) -I $(HEADER)
 
 re: fclean all

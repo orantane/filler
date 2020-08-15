@@ -6,19 +6,19 @@
 /*   By: orantane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/10 14:16:18 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 17:19:42 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 19:38:30 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/filler.h"
 
-static int		check_zero(t_filler *filler, t_block *map, int x, int y)
+static int		check_zero(t_filler *filler, int x, int y)
 {
-	if ((x + 1) < map->width && filler->heat[y][x + 1] == OPPO)
+	if ((x + 1) < filler->mapwidth && filler->heat[y][x + 1] == OPPO)
 		return (0);
 	if ((x - 1) >= 0 && filler->heat[y][x - 1] == OPPO)
 		return (0);
-	if ((y + 1) < map->height && filler->heat[y + 1][x] == OPPO)
+	if ((y + 1) < filler->mapheight && filler->heat[y + 1][x] == OPPO)
 		return (0);
 	if ((y - 1) >= 0 && filler->heat[y - 1][x] == OPPO)
 		return (0);
@@ -31,10 +31,10 @@ static int		check_zero(t_filler *filler, t_block *map, int x, int y)
 ** function needs to be added.
 */
 
-static int		check_value(t_filler *filler, t_block *map, int x, int y)
+static int		check_value(t_filler *filler, int x, int y)
 {
 	int		value;
-	int		arr[4];
+	int		arr[5];
 	int		i;
 
 	i = -1;
@@ -43,15 +43,18 @@ static int		check_value(t_filler *filler, t_block *map, int x, int y)
 		return (PLAY);
 	if (filler->heat[y][x] == OPPO)
 		return (OPPO);
-	if ((x + 1) < map->width)
+	while (++i < 5)
+		arr[i] = 1000;
+	i = -1;
+	if ((x + 1) < filler->mapwidth && filler->heat[y][x + 1] < filler->heat[y][x])
 		arr[0] = filler->heat[y][x + 1] + 1;
-	if ((x - 1) >= 0)
+	if ((x - 1) >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
 		arr[1] = filler->heat[y][x - 1] + 1;
-	if ((y + 1) < map->height)
+	if ((y + 1) < filler->mapheight && filler->heat[y + 1][x] < filler->heat[y][x])
 		arr[2] = filler->heat[y + 1][x] + 1;
-	if ((y - 1) >= 0)
+	if ((y - 1) >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
 		arr[3] = filler->heat[y - 1][x] + 1;
-	arr[4] = check_zero(filler, map, x, y);
+	arr[4] = check_zero(filler, x, y);
 	while (++i < 5)
 	{
 		if (arr[i] < value)
@@ -60,36 +63,22 @@ static int		check_value(t_filler *filler, t_block *map, int x, int y)
 	return (value);
 }
 
-t_filler	*give_value(t_filler *filler, t_block *map, int dir)
+t_filler	*give_value(t_filler *filler)
 {
 	int	y;
 	int	x;
 
 	y = -1;
-	while (++y < map->height)
+	while (++y < filler->mapheight)
 	{
 		x = -1;
-		while (++x < map->width)
+		while (++x < filler->mapwidth)
 		{
-			if (filler->heat[y][x] == PLAY) // Skips the players positions.
+			if (filler->heat[y][x] == PLAY)
 				x++;
-			if (filler->heat[y][x] == OPPO) // Marks zeroes around the opponent positions.
-			{
-				if (map->width > (x + dir) && (x + dir) >= 0 && filler->heat[y][x + dir] < PLAY)
-					filler->heat[y][x + dir] = 0;
-				if (map->height > (y + dir) && (y + dir) >= 0 && filler->heat[y + dir][x] < PLAY)
-					filler->heat[y + dir][x] = 0;
+			if (filler->heat[y][x] == OPPO)
 				x++;
-			}
-			filler->heat[y][x] = check_value(filler, map, x, y);
-//			if (x - 1 >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y][x - 1] + 1;
-//			if (x + 1 < map->width && filler->heat[y][x + 1] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y][x + 1] + 1;
-//			if (y - 1 >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y - 1][x] + 1;
-//			if (y + 1 < map->height && filler->heat[y + 1][x] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y + 1][x] + 1;
+			filler->heat[y][x] = check_value(filler, x, y);
 		}
 	}
 	return (filler);
@@ -101,37 +90,22 @@ t_filler	*give_value(t_filler *filler, t_block *map, int dir)
 ** the reversing function that creates the second half.
 */
 
-t_filler	*give_value_rev(t_filler *filler, t_block *map, int dir)
+t_filler	*give_value_rev(t_filler *filler)
 {
 	int	y;
 	int	x;
 
-	y = map->height;
+	y = filler->mapheight;
 	while (--y >= 0)
 	{
-		x = map->width;
+		x = filler->mapwidth;
 		while (--x >= 0)
 		{
 			if (filler->heat[y][x] == PLAY) // Skips the players positions.
 				x--;
 			if (filler->heat[y][x] == OPPO) // Marks zeroes around the opponent positions.
-			{
-				if (map->width > (x + dir) && (x + dir) >= 0 && filler->heat[y][x + dir] < PLAY)
-					filler->heat[y][x + dir] = 0;
-				if (map->height > (y + dir) && (y + dir) >= 0 && filler->heat[y + dir][x] < PLAY)
-					filler->heat[y + dir][x] = 0;
 				x--;
-			}
-			filler->heat[y][x] = check_value(filler, map, x, y);
-//			if (x - 1 >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y][x - 1] + 1;
-//			if (x + 1 < map->width && filler->heat[y][x + 1] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y][x + 1] + 1;
-//			if (y - 1 >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y - 1][x] + 1;
-//			if (y + 1 < map->height && filler->heat[y + 1][x] < filler->heat[y][x])
-//				filler->heat[y][x] = filler->heat[y + 1][x] + 1;
-			x--;
+			filler->heat[y][x] = check_value(filler, x, y);
 		}
 	}
 	return (filler);
@@ -144,20 +118,20 @@ t_filler	*give_value_rev(t_filler *filler, t_block *map, int dir)
 ** position.
 */
 
- t_filler	*mark_players(t_filler *filler, t_block *map)
+ t_filler	*mark_players(t_filler *filler)
 {
 	int	y;
 	int	x;
 
 	y = -1;
-	while (++y < map->height)
+	while (++y < filler->mapheight)
 	{
 		x = -1;
-		while (++x < map->width)
+		while (++x < filler->mapwidth)
 		{
-			if (map->cell[y][x] == filler->opponent || map->cell[y][x] == (filler->opponent + 32))
+			if (filler->map[y][x] == filler->opponent || filler->map[y][x] == (filler->opponent + 32))
 				filler->heat[y][x] = OPPO;
-			else if (map->cell[y][x] == filler->player || map->cell[y][x] == (filler->player + 32))
+			else if (filler->map[y][x] == filler->player || filler->map[y][x] == (filler->player + 32))
 				filler->heat[y][x] = PLAY;
 			else
 				filler->heat[y][x] = 1000;
@@ -166,10 +140,14 @@ t_filler	*give_value_rev(t_filler *filler, t_block *map, int dir)
 	return (filler);
 }
 
-void		heatmapper(t_filler *filler, t_block *map, t_block *cell)
+void		heatmapper(t_filler *filler)
 {
-	filler = mark_players(filler, map);
-	filler = give_value(filler, map, 1);
-	filler = give_value_rev(filler, map, -1);
-	solver(filler, map, cell);
+	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
+	filler = mark_players(filler);
+	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
+	filler = give_value(filler);
+	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
+	filler = give_value_rev(filler);
+	printf("Heatmapper map at start = %d, %d\n", filler->mapheight, filler->mapwidth);
+	solver(filler);
 }

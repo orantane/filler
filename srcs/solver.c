@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 16:56:16 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/15 19:46:24 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void		print_position(t_filler *filler)
 	write(1, "\n", 1);
 }
 
-static t_filler	*place_cell(t_filler *filler, t_block *map, t_block *cell, int y, int x)
+static t_filler	*place_cell(t_filler *filler, int y, int x)
 {
 	int		cy;
 	int		cx;
@@ -30,14 +30,14 @@ static t_filler	*place_cell(t_filler *filler, t_block *map, t_block *cell, int y
 	size = 0;
 	cy = filler->off_y;
 	value = 0;
-	while (cell->cell[cy] && (y + cy - filler->off_y) < map->height &&
-			(y + cy - filler->off_y) > -1)//Checks that the block doesn't go out of the map on y-axis.
+	while ((y + cy - filler->off_y) < filler->mapheight &&
+			(y + cy - filler->off_y) > -1 && cy < filler->cellheight)
 	{
 		cx = filler->off_x;
-		while(cell->cell[cy][cx] && (x + cx - filler->off_x) < map->width &&
-				(x + cx - filler->off_x) > -1)// Block doesn't go out of the map on x-axis.
+		while((x + cx - filler->off_x) < filler->mapwidth &&
+				(x + cx - filler->off_x) > -1 && cx < filler->cellwidth)
 		{
-			if (cell->cell[cy][cx] == '*')
+			if (filler->cell[cy][cx] == '*')
 			{
 				value = value + filler->heat[(y + cy - filler->off_y)][(x + cx - filler->off_x)];
 				size++;
@@ -61,7 +61,7 @@ static t_filler	*place_cell(t_filler *filler, t_block *map, t_block *cell, int y
 ** where there are two values that are equal.
 */
 
-static t_filler	*get_low_value(t_filler *filler, t_block *map, t_block *cell)
+static t_filler	*get_low_value(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -69,26 +69,28 @@ static t_filler	*get_low_value(t_filler *filler, t_block *map, t_block *cell)
 	y = -1;
 	filler->y = -1;
 	filler->x = -1;
-	while (++y < map->height)
+	while (++y < filler->mapheight)
 	{
 		x = -1;
-		while (++x < map->width)
+		printf("y: ");
+		while (++x < filler->mapwidth)
 		{
-			filler = place_cell(filler, map,cell, y, x);
+			filler = place_cell(filler, y, x);
+			printf("x ");
 		}
+		printf("\n");
 	}
 	return (filler);
 }
 
-static t_filler	*set_offset(t_filler *filler, int y, int x, t_block *cell)
+static t_filler	*set_offset(t_filler *filler, int y, int x)
 {
-	filler->size = 0;
-	while (++y < cell->height)
+	while (++y < filler->cellheight)
 	{
 		x = -1;
-		while (++x < cell->width)
+		while (++x < filler->cellwidth)
 		{
-			if (cell->cell[y][x] == '*')
+			if (filler->cell[y][x] == '*')
 			{
 				if (x < filler->off_x)
 					filler->off_x = x;
@@ -105,27 +107,24 @@ static t_filler	*set_offset(t_filler *filler, int y, int x, t_block *cell)
 	return (filler);
 }
 
-void			solver(t_filler *filler, t_block *map, t_block *cell)
+void			solver(t_filler *filler)
 {
 	int		x;
 	int		y;
 
-	filler->off_y = OFFS;
-	filler->off_x = OFFS;
-	filler->over_y = 0;
-	filler->over_x = 0;
-	filler->val = 200000;
 	x = -1;
 	y = -1;
-	filler = set_offset(filler, y, x, cell);
-	filler = get_low_value(filler, map, cell);
-	while (++y < 14)
-	{
-		x = -1;
-		while (++x < 30)
-			printf("%d\t", filler->heat[y][x]);
-		printf("\n");
-	}
+	filler = set_offset(filler, y, x);
+	printf("map before offset = %d, %d\n", filler->mapheight, filler->mapwidth);
+	filler = get_low_value(filler);
+	printf("map before offset = %d, %d\n", filler->mapheight, filler->mapwidth);
+//	while (++y < 14)
+//	{
+//		x = -1;
+//		while (++x < 30)
+//			printf("%d\t", filler->heat[y][x]);
+//		printf("\n");
+//	}
 	if (filler->val < PLAY || filler->val >= OPPO)
 		exit(1);
 	print_position(filler);
