@@ -33,7 +33,8 @@ void		read_piece(t_filler *filler, char *line)
 	line = line + 6;
 	filler->cellheight = ft_atoi(line);
 	filler->cellwidth = ft_atoi(ft_strchr(line, ' ') + 1);
-	if (!(filler->cell = (char **)malloc((1 + filler->cellheight) * sizeof(char *))))
+	if (!(filler->cell =
+		(char **)malloc((1 + filler->cellheight) * sizeof(char *))))
 	{
 		write(1, "error\n", 6);
 		exit(1);
@@ -43,10 +44,7 @@ void		read_piece(t_filler *filler, char *line)
 	{
 		get_next_line(0, &line);
 		if ((filler->cell[y] = ft_strdup(line)) == NULL)
-		{
-			write(1, "error\n", 6);
-			exit(1);
-		}
+			return ;
 	}
 	heatmapper(filler);
 }
@@ -56,8 +54,9 @@ void		read_map(t_filler *filler, char *line)
 	int		y;
 
 	y = 0;
-	if (!(filler->map = (char **)malloc((1 + filler->mapheight) * sizeof(char *))))
-		exit(1);
+	if (!(filler->map =
+		(char **)malloc((1 + filler->mapheight) * sizeof(char *))))
+		return ;
 	filler->map[filler->mapheight] = NULL;
 	while (ft_strncmp(line, "000 ", 4) != 0)
 		get_next_line(0, &line);

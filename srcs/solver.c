@@ -33,13 +33,10 @@ static void		place_cell(t_filler *filler, int y, int x)
 	while (cy < filler->cellheight && (y + cy - filler->off_y) < filler->mapheight)
 	{
 		cx = filler->off_x;
-		while((x + cx - filler->off_x) < filler->mapwidth && cx < filler->cellwidth)
+		while ((x + cx - filler->off_x) < filler->mapwidth && cx < filler->cellwidth)
 		{
-			if (filler->cell[cy][cx] == '*')
-			{
+			if (filler->cell[cy][cx] == '*' && size++ > -1)
 				value = value + filler->heat[(y + cy - filler->off_y)][(x + cx - filler->off_x)];
-				size++;
-			}
 			cx++;
 		}
 		cy++;
@@ -74,7 +71,7 @@ static void		get_low_value(t_filler *filler)
 	}
 }
 
-static void	set_offset(t_filler *filler, int y, int x)
+static void		set_offset(t_filler *filler, int y, int x)
 {
 	while (++y < filler->cellheight)
 	{

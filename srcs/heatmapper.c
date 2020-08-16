@@ -39,10 +39,6 @@ static int		check_value(t_filler *filler, int x, int y)
 
 	i = -1;
 	value = 1000;
-	if (filler->heat[y][x] == PLAY)
-		return (PLAY);
-	if (filler->heat[y][x] == OPPO)
-		return (OPPO);
 	while (++i < 5)
 		arr[i] = 1000;
 	i = -1;
@@ -63,7 +59,7 @@ static int		check_value(t_filler *filler, int x, int y)
 	return (value);
 }
 
-void		give_value(t_filler *filler)
+void			give_value(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -75,21 +71,20 @@ void		give_value(t_filler *filler)
 		while (++x < filler->mapwidth)
 		{
 			if (filler->heat[y][x] == PLAY)
-				x++;
+				continue ;
 			if (filler->heat[y][x] == OPPO)
-				x++;
+				continue ;
 			filler->heat[y][x] = check_value(filler, x, y);
 		}
 	}
 }
 
 /*
-** This function creates the first half of the heatmap. It could be a universal
-** function, but it would never fit the norm. So this was copied above for
-** the reversing function that creates the second half.
+** This function creates the second half of the heatmap. The function above
+** does the same thing first, but in the opposite direction.
 */
 
-void		give_value_rev(t_filler *filler)
+void			give_value_rev(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -100,9 +95,9 @@ void		give_value_rev(t_filler *filler)
 		x = filler->mapwidth;
 		while (--x >= 0)
 		{
-			if (filler->heat[y][x] == PLAY) // Skips the players positions.
+			if (filler->heat[y][x] == PLAY)
 				x--;
-			if (filler->heat[y][x] == OPPO) // Marks zeroes around the opponent positions.
+			if (filler->heat[y][x] == OPPO)
 				x--;
 			filler->heat[y][x] = check_value(filler, x, y);
 		}
@@ -110,13 +105,14 @@ void		give_value_rev(t_filler *filler)
 }
 
 /*
-** Goes through the heatmap and inits the values to defaults. 200k for the enemy, 100k for the player and 1k
-** for empty positions. With this, I can have conditions later, where I need to have one overlap with my own
-** position -> aka. valid values are over 100k, but less than 200k. Then take the lowest value for the best
-** position.
+** Goes through the heatmap and inits the values to defaults. 200k for
+** the opponent, 100k for the player and 1k for empty positions. With
+** this, I can have conditions later, where I need to have one overlap
+** with my own position -> aka. valid values are over 100k, but less
+** than 200k. Then take the lowest value for the best position.
 */
 
-void		mark_players(t_filler *filler)
+void			heatmapper(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -127,19 +123,16 @@ void		mark_players(t_filler *filler)
 		x = -1;
 		while (++x < filler->mapwidth)
 		{
-			if (filler->map[y][x] == filler->opponent || filler->map[y][x] == (filler->opponent + 32))
+			if (filler->map[y][x] == filler->opponent ||
+				filler->map[y][x] == (filler->opponent + 32))
 				filler->heat[y][x] = OPPO;
-			else if (filler->map[y][x] == filler->player || filler->map[y][x] == (filler->player + 32))
+			else if (filler->map[y][x] == filler->player ||
+					filler->map[y][x] == (filler->player + 32))
 				filler->heat[y][x] = PLAY;
 			else
 				filler->heat[y][x] = 1000;
 		}
 	}
-}
-
-void		heatmapper(t_filler *filler)
-{
-	mark_players(filler);
 	give_value(filler);
 	give_value_rev(filler);
 	solver(filler);

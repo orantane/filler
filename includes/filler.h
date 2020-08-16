@@ -54,7 +54,6 @@ void		read_map(t_filler *filler, char *line);
 void		read_piece(t_filler *filler, char *line);
 void		free_cell(char **cell);
 void		heatmapper(t_filler *filler);
-void		mark_players(t_filler *filler);
 void		give_value(t_filler *filler);
 void		give_value_rev(t_filler *filler);
 void		solver(t_filler *filler);
