@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/19 15:58:55 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/19 17:33:18 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,6 @@ static void		set_offset(t_filler *filler, int y, int x)
 					filler->off_x = x;
 				if (y < filler->off_y)
 					filler->off_y = y;
-				if (y > filler->over_y)
-					filler->over_y = y;
-				if (x > filler->over_x)
-					filler->over_x = x;
 				filler->size++;
 			}
 		}
@@ -111,6 +107,8 @@ void			solver(t_filler *filler)
 		exit(1);
 	}
 	print_position(filler);
+	free_cell(filler->map);
+	free_cell(filler->cell);
 	read_map(filler, line);
 	exit(1);
 }

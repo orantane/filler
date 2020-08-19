@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 17:42:36 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 20:52:51 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/19 17:47:00 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ typedef struct	s_filler
 	int			size;
 	int			off_y;
 	int			off_x;
-	int			over_y;
-	int			over_x;
 	char		player;
 	char		opponent;
 	char		**map;
