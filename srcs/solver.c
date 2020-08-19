@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/19 15:47:31 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/19 15:58:55 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,6 @@ void			solver(t_filler *filler)
 		exit(1);
 	}
 	print_position(filler);
-	init_map(filler, line);
+	read_map(filler, line);
 	exit(1);
 }

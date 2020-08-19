@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 18:28:44 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/19 15:51:28 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/19 16:05:01 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,10 @@ void		read_map(t_filler *filler, char *line)
 	int		y;
 
 	y = 0;
+	filler->off_y = OFFS;
+	filler->off_x = OFFS;
+	filler->val = OPPO;
+	filler->size = 0;
 	if (filler->map)
 		free_cell(filler->map);
 	if (filler->cell)
@@ -75,12 +79,8 @@ void		read_map(t_filler *filler, char *line)
 
 void		init_map(t_filler *filler, char *line)
 {
-	filler->off_y = OFFS;
 	filler->mapheight = 0;
 	filler->mapwidth = 0;
-	filler->off_x = OFFS;
-	filler->val = OPPO;
-	filler->size = 0;
 	if (ft_strncmp(line, "Plateau ", 6) != 0)
 		get_next_line(0, &line);
 	if (ft_strncmp(line, "Plateau ", 6) == 0)
