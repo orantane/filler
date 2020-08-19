@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 22:53:50 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/19 15:47:31 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,19 @@ void			solver(t_filler *filler)
 {
 	int		x;
 	int		y;
+	char	*line;
 
+	line = NULL;
 	x = -1;
 	y = -1;
 	set_offset(filler, y, x);
 	get_low_value(filler);
 	if (filler->val < PLAY || filler->val >= OPPO)
-		return ;
+	{
+		write(1, "0 0\n", 4);
+		exit(1);
+	}
 	print_position(filler);
+	init_map(filler, line);
+	exit(1);
 }

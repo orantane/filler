@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 18:28:44 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 23:01:29 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/19 15:51:28 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,10 @@ void		read_map(t_filler *filler, char *line)
 	int		y;
 
 	y = 0;
+	if (filler->map)
+		free_cell(filler->map);
+	if (filler->cell)
+		free_cell(filler->cell);
 	if (!(filler->map =
 		(char **)malloc((1 + filler->mapheight) * sizeof(char *))))
 		return ;
