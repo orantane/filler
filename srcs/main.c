@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 18:28:44 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/20 22:55:48 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/21 00:26:04 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,65 +53,40 @@ void		init_struct(t_filler *filler)
 	filler->cell = NULL;
 }
 
-void		read_piece(t_filler *filler, char *line, int fd)
+void		read_piece(t_filler *filler, char *line)
 {
 	int		y;
+	char	*temp;
 
 	y = -1;
-	line = line + 6;
-	filler->cellheight = ft_atoi(line);
-	filler->cellwidth = ft_atoi(ft_strchr(line, ' ') + 1);
+	temp = line + 6;
+	filler->cellheight = ft_atoi(temp);
+	filler->cellwidth = ft_atoi(ft_strchr(temp, ' ') + 1);
+	ft_strdel(&line);
 	if (!(filler->cell =
 		(char **)malloc((1 + filler->cellheight) * sizeof(char *))))
-	{
-		write(1, "error\n", 6);
 		exit(1);
-	}
 	filler->cell[filler->cellheight] = NULL;
 	while (++y < filler->cellheight)
 	{
-		if (y == (filler->cellheight -1))
-		{
+		if (y == (filler->cellheight - 1))
 			get_next_line(0, &line, filler->cellwidth);
-		}
 		else if (get_next_line(0, &line, 0) < 1)
 			return ;
 		if ((filler->cell[y] = ft_strdup(line)) == NULL)
 			exit(1);
 		ft_strdel(&line);
 	}
-	heatmapper(filler);
-	give_value(filler);
-	give_value_rev(filler);
-	y = -1;
-	int x;
-	while (++y < 15)
-	{
-		x = -1;
-		while (++x < 17)
-		{
-			ft_putnbr_fd(filler->heat[y][x], fd);
-			ft_putchar_fd('\t', fd);
-		}
-		ft_putchar_fd('\n', fd);
-	}
-	ft_putchar_fd('\n', fd);
-	ft_putchar_fd('\n', fd);
-	set_offset(filler, -1, -1);
-	get_low_value(filler);
-	print_position(filler);
-	free_cell(filler->map);
-	free_cell(filler->cell);
-	reset_heat(filler);
 }
 
-void		read_map(t_filler *filler, char *line, int fd)
+void		read_map(t_filler *filler, char *line)
 {
 	int		y;
 
 	y = 0;
 	while (ft_strncmp(line, "000 ", 4) != 0)
 	{
+		ft_strdel(&line);
 		if (get_next_line(0, &line, 0) < 1)
 			return ;
 	}
@@ -125,26 +100,24 @@ void		read_map(t_filler *filler, char *line, int fd)
 		ft_strdel(&line);
 		y++;
 		if (get_next_line(0, &line, 0) != 1)
-			exit (1);
+			exit(1);
 	}
-	read_piece(filler, line, fd);
+	read_piece(filler, line);
 }
 
 int			init_map(t_filler *filler, char *line)
 {
+	char	*temp;
+
 	while (ft_strncmp(line, "Plateau ", 6) != 0)
-	{
-		if (get_next_line(0, &line, 0) < 1)
-			return (0);
-	}
+		get_next_line(0, &line, 0);
 	if (ft_strncmp(line, "Plateau ", 6) == 0)
 	{
-		line = ft_strchr(line, ' ') + 1;
-		filler->mapheight = ft_atoi(line);
-		filler->mapwidth = ft_atoi(ft_strchr(line, ' ') + 1);
+		temp = ft_strchr(line, ' ') + 1;
+		filler->mapheight = ft_atoi(temp);
+		filler->mapwidth = ft_atoi(ft_strchr(temp, ' ') + 1);
 	}
-	else
-		return (0);
+	ft_strdel(&line);
 	return (1);
 }
 
@@ -170,11 +143,7 @@ int			main(void)
 {
 	t_filler	filler;
 	char		*line;
-	int			fd;
-	int			count;
 
-	count = 0;
-	fd = open("/Users/orantane/Desktop/Projects/filler/github/d.txt", O_RDWR);
 	ft_bzero(&filler, sizeof(t_filler));
 	line = NULL;
 	get_next_line(0, &line, 0);
@@ -182,11 +151,18 @@ int			main(void)
 	ft_strdel(&line);
 	while (1)
 	{
-		get_next_line(0, &line, 0);
 		init_struct(&filler);
 		if (init_map(&filler, line) == 0)
 			break ;
-		read_map(&filler, line, fd);
+		read_map(&filler, line);
+//		free_cell(filler.map);
+//		free_cell(filler.cell);
+		heatmapper(&filler);
+		give_value(&filler);
+		set_offset(&filler, -1, -1);
+		get_low_value(&filler);
+		reset_heat(&filler);
+		print_position(&filler);
 		if (line)
 			ft_strdel(&line);
 	}

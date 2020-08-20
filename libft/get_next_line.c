@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 02:26:01 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/20 19:55:12 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/20 23:50:37 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,7 @@ int			get_next_line(const int fd, char **line, int end)
 			free(strings[fd]);
 			strings[fd] = temp;
 		}
-		if (end > 0 && ++stop == end)
-			break ;
-		if (ft_strchr(strings[fd], '\n'))
+		if ((ft_strchr(strings[fd], '\n')) || (end > 0 && ++stop == end))
 			break ;
 	}
 	return (checkout(line, fd, strings, ret));
