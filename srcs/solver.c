@@ -6,21 +6,26 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/19 17:33:18 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/20 21:10:37 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/filler.h"
 
-static void		print_position(t_filler *filler)
+void		print_position(t_filler *filler)
 {
-	ft_putnbr(filler->x);
-	write(1, " ", 1);
+	if (filler->val < PLAY || filler->val >= OPPO)
+	{
+		write(1, "0 0\n", 4);
+		exit(1);
+	}
 	ft_putnbr(filler->y);
+	write(1, " ", 1);
+	ft_putnbr(filler->x);
 	write(1, "\n", 1);
 }
 
-static void		place_cell(t_filler *filler, int y, int x)
+void		place_cell(t_filler *filler, int y, int x)
 {
 	int		cy;
 	int		cx;
@@ -55,7 +60,7 @@ static void		place_cell(t_filler *filler, int y, int x)
 ** where there are two values that are equal.
 */
 
-static void		get_low_value(t_filler *filler)
+void		get_low_value(t_filler *filler)
 {
 	int	y;
 	int	x;
@@ -71,7 +76,7 @@ static void		get_low_value(t_filler *filler)
 	}
 }
 
-static void		set_offset(t_filler *filler, int y, int x)
+void		set_offset(t_filler *filler, int y, int x)
 {
 	while (++y < filler->cellheight)
 	{
@@ -88,27 +93,4 @@ static void		set_offset(t_filler *filler, int y, int x)
 			}
 		}
 	}
-}
-
-void			solver(t_filler *filler)
-{
-	int		x;
-	int		y;
-	char	*line;
-
-	line = NULL;
-	x = -1;
-	y = -1;
-	set_offset(filler, y, x);
-	get_low_value(filler);
-	if (filler->val < PLAY || filler->val >= OPPO)
-	{
-		write(1, "0 0\n", 4);
-		exit(1);
-	}
-	print_position(filler);
-	free_cell(filler->map);
-	free_cell(filler->cell);
-	read_map(filler, line);
-	exit(1);
 }

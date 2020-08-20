@@ -6,7 +6,7 @@
 /*   By: orantane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/10 14:16:18 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 21:49:43 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/20 22:51:29 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,9 @@ void			give_value_rev(t_filler *filler)
 		while (--x >= 0)
 		{
 			if (filler->heat[y][x] == PLAY)
-				x--;
+				continue ;
 			if (filler->heat[y][x] == OPPO)
-				x--;
+				continue ;
 			filler->heat[y][x] = check_value(filler, x, y);
 		}
 	}
@@ -133,7 +133,4 @@ void			heatmapper(t_filler *filler)
 				filler->heat[y][x] = 1000;
 		}
 	}
-	give_value(filler);
-	give_value_rev(filler);
-	solver(filler);
 }

@@ -6,13 +6,13 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 02:26:01 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 20:46:24 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/20 19:55:12 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_copy(char **line, const int fd, char **strings)
+static int	ft_copy(char **line, const int fd, char **strings, int done)
 {
 	int		i;
 	char	*rest;
@@ -33,27 +33,40 @@ static int	ft_copy(char **line, const int fd, char **strings)
 	{
 		*line = ft_strdup(strings[fd]);
 		ft_strdel(&strings[fd]);
+		done = 1;
+		return (0);
 	}
 	return (1);
 }
 
 static int	checkout(char **line, const int fd, char **strings, int ret)
 {
+	static int	done;
+
+	if (!done)
+		done = 0;
+	if (done == 1)
+	{
+		done = 0;
+		return (0);
+	}
 	if (ret < 0)
 		return (-1);
 	else if (ret == 0 && strings[fd] == NULL)
 		return (0);
 	else
-		return (ft_copy(line, fd, strings));
+		return (ft_copy(line, fd, strings, done));
 }
 
-int			get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **line, int end)
 {
 	char		buff[BUFF_SIZE + 1];
 	static char	*strings[FD_SIZE];
 	char		*temp;
 	int			ret;
+	int			stop;
 
+	stop = 0;
 	if (fd < 0 || !line || fd > FD_SIZE)
 		return (-1);
 	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
@@ -67,6 +80,8 @@ int			get_next_line(const int fd, char **line)
 			free(strings[fd]);
 			strings[fd] = temp;
 		}
+		if (end > 0 && ++stop == end)
+			break ;
 		if (ft_strchr(strings[fd], '\n'))
 			break ;
 	}

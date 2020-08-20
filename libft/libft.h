@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 16:45:02 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/15 19:49:54 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/20 19:55:22 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,6 @@ void				ft_lstdelone(t_list **alst, void (*del)(void *, size_t));
 void				ft_lstdel(t_list **alst, void (*del)(void *, size_t));
 void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 t_list				*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
-int					get_next_line(const int fd, char **line);
+int					get_next_line(const int fd, char **line, int end);
 
 #endif
