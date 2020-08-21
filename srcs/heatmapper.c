@@ -6,7 +6,7 @@
 /*   By: orantane <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/10 14:16:18 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/20 23:48:15 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/21 20:15:34 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,22 +31,22 @@ static int		check_zero(t_filler *filler, int x, int y)
 ** function needs to be added.
 */
 
-static int		check_value(t_filler *filler, int x, int y)
+static int		check_value(t_filler *filler, int x, int y, int i)
 {
 	int		value;
 	int		arr[5];
-	int		i;
 
-	i = -1;
 	value = 1000;
 	while (++i < 5)
 		arr[i] = 1000;
 	i = -1;
-	if ((x + 1) < filler->mapwidth && filler->heat[y][x + 1] < filler->heat[y][x])
+	if ((x + 1) < filler->mapwidth &&
+			filler->heat[y][x + 1] < filler->heat[y][x])
 		arr[0] = filler->heat[y][x + 1] + 1;
 	if ((x - 1) >= 0 && filler->heat[y][x - 1] < filler->heat[y][x])
 		arr[1] = filler->heat[y][x - 1] + 1;
-	if ((y + 1) < filler->mapheight && filler->heat[y + 1][x] < filler->heat[y][x])
+	if ((y + 1) < filler->mapheight &&
+			filler->heat[y + 1][x] < filler->heat[y][x])
 		arr[2] = filler->heat[y + 1][x] + 1;
 	if ((y - 1) >= 0 && filler->heat[y - 1][x] < filler->heat[y][x])
 		arr[3] = filler->heat[y - 1][x] + 1;
@@ -63,7 +63,9 @@ void			give_value(t_filler *filler)
 {
 	int	y;
 	int	x;
+	int	i;
 
+	i = -1;
 	y = -1;
 	while (++y < filler->mapheight)
 	{
@@ -74,7 +76,7 @@ void			give_value(t_filler *filler)
 				continue ;
 			if (filler->heat[y][x] == OPPO)
 				continue ;
-			filler->heat[y][x] = check_value(filler, x, y);
+			filler->heat[y][x] = check_value(filler, x, y, i);
 		}
 	}
 }
@@ -88,7 +90,9 @@ void			give_value_rev(t_filler *filler)
 {
 	int	y;
 	int	x;
+	int	i;
 
+	i = -1;
 	y = filler->mapheight;
 	while (--y >= 0)
 	{
@@ -99,7 +103,7 @@ void			give_value_rev(t_filler *filler)
 				continue ;
 			if (filler->heat[y][x] == OPPO)
 				continue ;
-			filler->heat[y][x] = check_value(filler, x, y);
+			filler->heat[y][x] = check_value(filler, x, y, i);
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 17:42:36 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/21 00:15:42 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/21 20:25:25 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ typedef struct	s_filler
 	int			y;
 	int			val;
 	int			size;
-	int			off_y;
-	int			off_x;
+	int			oy;
+	int			ox;
 	char		player;
 	char		opponent;
 	char		**map;
@@ -52,7 +52,7 @@ void		set_players(t_filler *filler, char *line);
 int			init_map(t_filler *filler, char *line);
 void		read_map(t_filler *filler, char *line);
 void		read_piece(t_filler *filler, char *line);
-void		free_cell(char **cell);
+void		free_cell(char **cell, int len);
 void		reset_heat(t_filler *filler);
 void		heatmapper(t_filler *filler);
 void		give_value(t_filler *filler);

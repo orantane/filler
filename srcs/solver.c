@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/21 18:59:19 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/21 20:34:05 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,36 +23,36 @@ void		print_position(t_filler *filler)
 	write(1, " ", 1);
 	ft_putnbr(filler->x);
 	write(1, "\n", 1);
-	free_cell(filler->map);
-	free_cell(filler->cell);
+	free_cell(filler->map, filler->mapheight);
+	free_cell(filler->cell, filler->cellheight);
 }
 
 void		place_cell(t_filler *filler, int y, int x)
 {
-	int		cy;
-	int		cx;
-	int		value;
+	int		a;
+	int		b;
+	int		v;
 	int		size;
 
 	size = 0;
-	cy = filler->off_y;
-	value = 0;
-	while (cy < filler->cellheight && (y + cy - filler->off_y) < filler->mapheight)
+	a = filler->oy;
+	v = 0;
+	while (a < filler->cellheight && y + a - filler->oy < filler->mapheight)
 	{
-		cx = filler->off_x;
-		while ((x + cx - filler->off_x) < filler->mapwidth && cx < filler->cellwidth)
+		b = filler->ox;
+		while (x + b - filler->ox < filler->mapwidth && b < filler->cellwidth)
 		{
-			if (filler->cell[cy][cx] == '*' && size++ > -1)
-				value = value + filler->heat[(y + cy - filler->off_y)][(x + cx - filler->off_x)];
-			cx++;
+			if (filler->cell[a][b] == '*' && size++ > -1)
+				v = v + filler->heat[y + a - filler->oy][x + b - filler->ox];
+			b++;
 		}
-		cy++;
+		a++;
 	}
-	if (filler->size == size && value < OPPO && value > PLAY && value <= filler->val)
+	if (filler->size == size && v < OPPO && v > PLAY && v <= filler->val)
 	{
-		filler->val = value;
-		filler->y = y - filler->off_y;
-		filler->x = x - filler->off_x;
+		filler->val = v;
+		filler->y = y - filler->oy;
+		filler->x = x - filler->ox;
 	}
 }
 
@@ -87,10 +87,10 @@ void		set_offset(t_filler *filler, int y, int x)
 		{
 			if (filler->cell[y][x] == '*')
 			{
-				if (x < filler->off_x)
-					filler->off_x = x;
-				if (y < filler->off_y)
-					filler->off_y = y;
+				if (x < filler->ox)
+					filler->ox = x;
+				if (y < filler->oy)
+					filler->oy = y;
 				filler->size++;
 			}
 		}
