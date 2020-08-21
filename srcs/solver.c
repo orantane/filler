@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/13 15:25:31 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/20 21:10:37 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/21 18:59:19 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void		print_position(t_filler *filler)
 	write(1, " ", 1);
 	ft_putnbr(filler->x);
 	write(1, "\n", 1);
+	free_cell(filler->map);
+	free_cell(filler->cell);
 }
 
 void		place_cell(t_filler *filler, int y, int x)
@@ -46,7 +48,7 @@ void		place_cell(t_filler *filler, int y, int x)
 		}
 		cy++;
 	}
-	if (filler->size == size && value < OPPO && value > PLAY && value < filler->val)
+	if (filler->size == size && value < OPPO && value > PLAY && value <= filler->val)
 	{
 		filler->val = value;
 		filler->y = y - filler->off_y;

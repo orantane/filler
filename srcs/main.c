@@ -6,7 +6,7 @@
 /*   By: orantane <orantane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/30 18:28:44 by orantane          #+#    #+#             */
-/*   Updated: 2020/08/21 00:26:04 by orantane         ###   ########.fr       */
+/*   Updated: 2020/08/21 18:43:13 by orantane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,6 @@ int			main(void)
 		if (init_map(&filler, line) == 0)
 			break ;
 		read_map(&filler, line);
-//		free_cell(filler.map);
-//		free_cell(filler.cell);
 		heatmapper(&filler);
 		give_value(&filler);
 		set_offset(&filler, -1, -1);
