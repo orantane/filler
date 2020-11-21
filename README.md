@@ -78,7 +78,7 @@ The tokens are managed randomly by the VM. You can’t predict their size or sha
 - Player number:
   - The first two lines of the filler must be in the following format: $$$ exec pPLAYER_NUMBER : [PLAYER_NAME]
   - The filler will only send the line that concerns your program. You’ll have to get your player number.
-  - f you are Player 1 your program will be represented by “o” and “O”. If you are Player 2, your program will be represented by “x” and “X”. The first step will be to get your player number.
+  - If you are Player 1 your program will be represented by “o” and “O”. If you are Player 2, your program will be represented by “x” and “X”. The first step will be to get your player number.
   - The lowercases (“x” or “o”) will highlight the piece last placed on the board. At the following turns, that same piece will be represented by the uppercase letters (“X” or “O”), as it won’t be the piece last placed anymore.
   - You will collect points each time you place a piece.
 - How the game works:
